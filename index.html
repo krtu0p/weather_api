@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #result {
+            font-size: 3em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather</h1>
+    <form id="weatherForm">
+        <input type="text" id="latitude" placeholder="Latitude e.g 51.5074" required>
+        <input type="text" id="longitude" placeholder="Longitude e.g -0.1278" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.querySelector('#weatherForm').addEventListener('submit', event => {
+            event.preventDefault();
+            const lat = document.querySelector('#latitude').value.trim();
+            const lon = document.querySelector('#longitude').value.trim();
+            fetch(`http://localhost:8080/weather/${lat}/${lon}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.current_weather) {
+                        document.querySelector('#result').innerHTML =
+                            `Temperature: ${data.current_weather.temperature}°C<br>
+                             Windspeed: ${data.current_weather.windspeed} km/h<br>
+                             Wind Direction: ${data.current_weather.winddirection}°<br>
+                             Time: ${data.current_weather.time}`;
+                    } else {
+                        document.querySelector('#result').innerText = "No weather data found.";
+                    }
+                })
+                .catch(err => {
+                    document.querySelector('#result').innerText = "Error fetching weather data.";
+                });
+        });
+    </script>
+</body>
+</html>
